@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== BASE STYLES ===== */
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: linear-gradient(135deg, #eff6ff, #fae8ff, #fbcfe8, #dbeafe);
+  }
+
+  body {
+    font-family: var(--font-rajdhani), sans-serif;
+    color: #1e293b;
+    background: linear-gradient(135deg, #eff6ff 0%, #fae8ff 30%, #fbcfe8 65%, #dbeafe 100%);
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  ::selection {
+    background: rgba(244, 114, 182, 0.4);
+    color: #1e293b;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(219, 234, 254, 0.5);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #93c5fd, #f472b6);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, #60a5fa, #ec4899);
+  }
+}
+
+/* ===== COMPONENT STYLES ===== */
+@layer components {
+  /* Keypad Button */
+  .keypad-btn {
+    @apply relative flex items-center justify-center rounded-lg
+      font-orbitron text-xl font-bold transition-all duration-200
+      active:scale-95;
+    background: rgba(15, 20, 50, 0.8);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    color: #e0e6ff;
+    min-height: 60px;
+  }
+
+  .keypad-btn:hover {
+    background: rgba(0, 240, 255, 0.1);
+    border-color: rgba(0, 240, 255, 0.5);
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+    color: #00f0ff;
+  }
+
+  .keypad-btn:active {
+    background: rgba(0, 240, 255, 0.2);
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.4);
+  }
+}
+
+/* ===== UTILITY STYLES ===== */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
