@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, useMotionValue, useTransform, animate } from "framer-motion";
+import Image from "next/image";
+import { motion, useMotionValue, useTransform, animate, AnimatePresence } from "framer-motion";
 
 const initialPhotos = [
   { id: 1, src: "/photos/1.jpg", caption: "Love youu 💕" },
@@ -22,6 +23,7 @@ interface PolaroidCardProps {
   isTop: boolean;
   onSwipeToBack: () => void;
   onClick: () => void;
+  onZoom: () => void;
 }
 
 function PolaroidCard({
@@ -31,6 +33,7 @@ function PolaroidCard({
   isTop,
   onSwipeToBack,
   onClick,
+  onZoom,
 }: PolaroidCardProps) {
   const dragX = useMotionValue(position.x);
   const dragY = useMotionValue(position.y);
@@ -136,14 +139,45 @@ function PolaroidCard({
           {/* Tape */}
           <div className="absolute -top-2.5 left-[calc(50%-20px)] w-10 h-5 sm:w-12 sm:h-6 sm:-top-3 sm:left-[calc(50%-24px)] bg-pink-200/30 backdrop-blur-[1px] rotate-[-2deg] border-l border-r border-dashed border-pink-300/40 shadow-sm pointer-events-none z-10" />
 
+          {/* Zoom trigger icon on top right corner */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onZoom();
+            }}
+            className="absolute top-2 right-2 z-20 bg-black/40 hover:bg-black/70 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+            title="Perbesar Foto"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
+              <path d="M11 8v6M8 11h6" />
+            </svg>
+          </button>
+
           {/* Photo */}
-          <div className="w-full aspect-square bg-gray-50 relative overflow-hidden rounded-[2px] border border-gray-100">
-            <img
+          <div
+            className="w-full aspect-square bg-gray-50 relative overflow-hidden rounded-[2px] border border-gray-100 cursor-pointer"
+            onClick={(e) => {
+              if (isTop) {
+                e.stopPropagation();
+                onZoom();
+              }
+            }}
+          >
+            <Image
               src={photo.src}
               alt={photo.caption}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 pointer-events-none"
+              fill
+              sizes="(max-width: 768px) 230px, 260px"
+              priority
+              className="object-cover transition-transform duration-700 group-hover:scale-110"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
+              <span className="text-white text-xs font-mono bg-black/50 px-2 py-1 rounded-full backdrop-blur-sm">
+                🔍 Klik untuk memperbesar
+              </span>
+            </div>
           </div>
 
           {/* Caption - fixed positioning */}
@@ -185,7 +219,7 @@ function RomanticParticles() {
         | "sparkle",
       direction: Math.random() > 0.45 ? "up" : "down" as "up" | "down",
       duration: Math.random() * 8 + 12,
-      delay: Math.random() * -20, // Start mid-animation immediately
+      delay: Math.random() * -20,
     }));
     setParticles(newParticles);
   }, []);
@@ -258,10 +292,25 @@ function RomanticParticles() {
 
 interface UnlockedViewProps {
   onClose?: () => void;
+  isPlaying?: boolean;
+  isMuted?: boolean;
+  onTogglePlay?: () => void;
+  onToggleMute?: () => void;
 }
 
-export default function UnlockedView({ onClose }: UnlockedViewProps) {
+export default function UnlockedView({
+  onClose,
+  isPlaying = false,
+  isMuted = false,
+  onTogglePlay,
+  onToggleMute,
+}: UnlockedViewProps) {
   const [cards, setCards] = useState(initialPhotos);
+  const [selectedPhoto, setSelectedPhoto] = useState<{
+    id: number;
+    src: string;
+    caption: string;
+  } | null>(null);
 
   const handleCardClick = (id: number) => {
     setCards((prev) => {
@@ -325,6 +374,108 @@ export default function UnlockedView({ onClose }: UnlockedViewProps) {
       {/* Background Particles */}
       <RomanticParticles />
 
+      {/* Floating Music Control Bar */}
+      <motion.div
+        className="fixed top-4 right-4 z-40 flex items-center gap-2 bg-white/70 backdrop-blur-md px-4 py-2 rounded-full border border-white/80 shadow-lg"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+      >
+        {/* Equalizer Bars */}
+        <div className="flex items-end gap-0.5 h-4 w-5">
+          {[0.6, 1, 0.4, 0.8].map((_, i) => (
+            <motion.div
+              key={i}
+              className="w-1 bg-[#f472b6] rounded-full"
+              animate={isPlaying ? { height: ["20%", "100%", "30%", "80%"] } : { height: "20%" }}
+              transition={{ duration: 0.6 + i * 0.15, repeat: Infinity, repeatType: "reverse" }}
+            />
+          ))}
+        </div>
+        <span className="text-xs font-mono font-medium text-slate-700 hidden sm:inline">
+          {isPlaying ? "BGM Playing" : "BGM Paused"}
+        </span>
+
+        {/* Play/Pause Button */}
+        {onTogglePlay && (
+          <button
+            onClick={onTogglePlay}
+            className="p-1.5 hover:bg-pink-100/80 rounded-full transition-colors text-slate-700"
+            title={isPlaying ? "Jeda Musik" : "Putar Musik"}
+          >
+            {isPlaying ? (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="6" y="4" width="4" height="16" rx="1" />
+                <rect x="14" y="4" width="4" height="16" rx="1" />
+              </svg>
+            ) : (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            )}
+          </button>
+        )}
+
+        {/* Mute Button */}
+        {onToggleMute && (
+          <button
+            onClick={onToggleMute}
+            className="p-1.5 hover:bg-pink-100/80 rounded-full transition-colors text-slate-700"
+            title={isMuted ? "Bunyikan Musik" : "Bisu Musik"}
+          >
+            {isMuted ? (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M11 5L6 9H2v6h4l5 4V5zM23 9l-6 6M17 9l6 6" />
+              </svg>
+            ) : (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+              </svg>
+            )}
+          </button>
+        )}
+      </motion.div>
+
+      {/* Photo Lightbox Modal */}
+      <AnimatePresence>
+        {selectedPhoto && (
+          <motion.div
+            className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedPhoto(null)}
+          >
+            <motion.div
+              className="bg-white p-4 sm:p-6 pb-12 rounded-md max-w-[90vw] max-h-[85vh] relative shadow-2xl flex flex-col items-center"
+              initial={{ scale: 0.85, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.85, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setSelectedPhoto(null)}
+                className="absolute -top-3 -right-3 bg-white text-slate-700 rounded-full w-9 h-9 flex items-center justify-center shadow-lg font-bold hover:bg-pink-100 transition-colors z-20 border border-slate-200"
+              >
+                ✕
+              </button>
+              <div className="relative w-[280px] sm:w-[420px] md:w-[480px] aspect-square rounded-sm overflow-hidden border border-slate-100">
+                <Image
+                  src={selectedPhoto.src}
+                  alt={selectedPhoto.caption}
+                  fill
+                  priority
+                  className="object-cover"
+                />
+              </div>
+              <p className="font-dancing text-2xl sm:text-3xl text-slate-700 mt-5 text-center">
+                {selectedPhoto.caption}
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Main centered container - stacked vertically on mobile, side by side on lg */}
       <div className="max-w-[800px] w-full flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-10 relative z-10">
         {/* Left Side: Photos */}
@@ -347,6 +498,7 @@ export default function UnlockedView({ onClose }: UnlockedViewProps) {
                 isTop={isTop}
                 onSwipeToBack={() => sendToBack(photo.id)}
                 onClick={() => handleCardClick(photo.id)}
+                onZoom={() => setSelectedPhoto(photo)}
               />
             );
           })}
@@ -389,7 +541,6 @@ export default function UnlockedView({ onClose }: UnlockedViewProps) {
             {/* Decorative gradient corners */}
             <div className="absolute top-0 right-0 w-28 h-28 bg-gradient-to-br from-[#f472b6]/15 to-transparent rounded-bl-full pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-28 h-28 bg-gradient-to-tr from-[#93c5fd]/15 to-transparent rounded-tr-full pointer-events-none" />
-
 
             {/* Stamp */}
             <motion.div

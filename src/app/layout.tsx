@@ -29,12 +29,23 @@ const dancing = Dancing_Script({
 });
 
 export const metadata: Metadata = {
-  title: "Brankas Rahasia | Secret Love Archive",
+  title: "Brankas Rahasia | Secret Love Archive 💖",
   description: "Arsip digital cinta rahasia — sebuah surat cinta digital yang tersimpan dalam brankas.",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
   openGraph: {
-    title: "Brankas Rahasia",
-    description: "Arsip digital cinta rahasia",
+    title: "Brankas Rahasia | Secret Love Archive 💖",
+    description: "Arsip digital cinta rahasia — sebuah surat cinta digital tersimpan dalam brankas.",
     type: "website",
+    siteName: "Secret Love Archive",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Brankas Rahasia | Secret Love Archive 💖",
+    description: "Arsip digital cinta rahasia — sebuah surat cinta digital tersimpan dalam brankas.",
   },
   robots: {
     index: false,

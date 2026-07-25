@@ -10,6 +10,8 @@ export default function ClientPage() {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [showContent, setShowContent] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -29,9 +31,36 @@ export default function ClientPage() {
   useEffect(() => {
     if (isUnlocked && audioRef.current) {
       audioRef.current.volume = 0.3;
-      audioRef.current.play().catch((e) => console.error("Audio auto-play prevented:", e));
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => setIsPlaying(true))
+          .catch((e) => {
+            console.error("Audio auto-play prevented:", e);
+            setIsPlaying(false);
+          });
+      }
     }
   }, [isUnlocked]);
+
+  const togglePlay = () => {
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch(() => setIsPlaying(false));
+    }
+  };
+
+  const toggleMute = () => {
+    if (!audioRef.current) return;
+    audioRef.current.muted = !isMuted;
+    setIsMuted(!isMuted);
+  };
 
   const handleUnlock = () => {
     setIsUnlocked(true);
@@ -43,6 +72,7 @@ export default function ClientPage() {
   const handleLock = () => {
     setShowContent(false);
     setIsUnlocked(false);
+    setIsPlaying(false);
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
@@ -181,7 +211,13 @@ export default function ClientPage() {
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 3, ease: [0.16, 1, 0.3, 1] }}
           >
-            <UnlockedView onClose={handleLock} />
+            <UnlockedView
+              onClose={handleLock}
+              isPlaying={isPlaying}
+              isMuted={isMuted}
+              onTogglePlay={togglePlay}
+              onToggleMute={toggleMute}
+            />
           </motion.div>
         )}
       </AnimatePresence>

@@ -21,6 +21,20 @@ export default function VaultKeypad({ onUnlock }: VaultKeypadProps) {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key >= "0" && e.key <= "9") {
+        handleKeyPress(e.key);
+      } else if (e.key === "Enter") {
+        handleKeyPress("OK");
+      } else if (e.key === "Backspace" || e.key === "Delete") {
+        handleKeyPress("HAPUS");
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyPress]);
+
   const handleKeyPress = useCallback(
     (key: string) => {
       if (status === "success") return;
