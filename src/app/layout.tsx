@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Orbitron, Rajdhani, Share_Tech_Mono, Dancing_Script } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const orbitron = Orbitron({
@@ -71,6 +72,7 @@ export default function RootLayout({
         className={`${orbitron.variable} ${rajdhani.variable} ${shareTechMono.variable} ${dancing.variable} font-rajdhani antialiased text-slate-800 min-h-screen`}
       >
         {children}
+        <Analytics />
       </body>
     </html>
   );
