@@ -173,11 +173,7 @@ function PolaroidCard({
               priority
               className="object-cover transition-transform duration-700 group-hover:scale-110"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
-              <span className="text-white text-xs font-mono bg-black/50 px-2 py-1 rounded-full backdrop-blur-sm">
-                🔍 Klik untuk memperbesar
-              </span>
-            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           </div>
 
           {/* Caption - fixed positioning */}
