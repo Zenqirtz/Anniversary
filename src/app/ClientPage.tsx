@@ -89,7 +89,7 @@ export default function ClientPage() {
       }}
     >
       {/* Hidden Audio Element */}
-      <audio ref={audioRef} src="/music/Download.mp3" loop preload="auto" />
+      <audio ref={audioRef} src="/music/Download.mp3" loop preload="none" />
 
       {/* Background ambient glow - blue-pink gradient orbs (only visible when unlocked) */}
       {showContent && (
@@ -164,7 +164,7 @@ export default function ClientPage() {
 
           {/* Floating sparkles */}
           {mounted &&
-            Array.from({ length: 25 }).map((_, i) => (
+            Array.from({ length: 12 }).map((_, i) => (
               <motion.div
                 key={i}
                 className="absolute rounded-full"

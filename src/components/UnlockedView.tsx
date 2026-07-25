@@ -203,7 +203,7 @@ function RomanticParticles() {
 
   useEffect(() => {
     const isMobile = window.innerWidth < 768;
-    const count = isMobile ? 25 : 50;
+    const count = isMobile ? 12 : 20;
     const newParticles = Array.from({ length: count }).map((_, i) => ({
       id: i,
       x: Math.random() * 100,
