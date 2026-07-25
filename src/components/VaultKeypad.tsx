@@ -76,24 +76,24 @@ export default function VaultKeypad({ onUnlock }: VaultKeypadProps) {
       style={{ background: "linear-gradient(160deg, #1c1c1c 0%, #2a2a2a 50%, #1f1f1f 100%)" }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0, scale: 1.1, filter: "blur(20px)", transition: { duration: 0.8 } }}
-      transition={{ duration: 0.8 }}
+      exit={{ opacity: 0, scale: 1.05, transition: { duration: 0.5 } }}
+      transition={{ duration: 0.6 }}
     >
       {/* Subtle ambient glow */}
       <motion.div
-        className="absolute w-[500px] h-[500px] rounded-full pointer-events-none z-0"
+        className="absolute w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] rounded-full pointer-events-none z-0"
         style={{
           background: "radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%)",
         }}
         animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.4, 0.8, 0.4],
+          scale: [1, 1.15, 1],
+          opacity: [0.4, 0.7, 0.4],
         }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
       />
 
       {/* Soft floating particles */}
-      {mounted && Array.from({ length: 15 }).map((_, i) => (
+      {mounted && Array.from({ length: 6 }).map((_, i) => (
         <motion.div
           key={i}
           className="absolute rounded-full pointer-events-none z-0"

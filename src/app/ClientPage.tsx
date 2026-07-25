@@ -100,77 +100,81 @@ export default function ClientPage() {
         >
           {/* Animated blue/purple orb */}
           <motion.div
-            className="absolute w-[800px] h-[800px] rounded-full blur-[120px]"
+            className="absolute w-[350px] sm:w-[700px] h-[350px] sm:h-[700px] rounded-full blur-2xl sm:blur-[100px]"
             style={{
               background: "radial-gradient(circle, rgba(147,197,253,0.55) 0%, rgba(196,181,253,0.25) 50%, transparent 70%)",
-              top: "-20%",
+              top: "-10%",
               left: "-10%",
+              willChange: "transform",
             }}
             animate={{
-              x: [0, 120, -60, 0],
-              y: [0, 80, 120, 0],
-              scale: [1, 1.2, 0.9, 1],
+              x: [0, 60, -30, 0],
+              y: [0, 40, 60, 0],
+              scale: [1, 1.1, 0.95, 1],
             }}
             transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
           />
 
           {/* Animated pink/peach orb */}
           <motion.div
-            className="absolute w-[700px] h-[700px] rounded-full blur-[100px]"
+            className="absolute w-[320px] sm:w-[600px] h-[320px] sm:h-[600px] rounded-full blur-2xl sm:blur-[90px]"
             style={{
               background: "radial-gradient(circle, rgba(244,114,182,0.5) 0%, rgba(253,186,116,0.2) 50%, transparent 70%)",
-              bottom: "-20%",
+              bottom: "-10%",
               right: "-10%",
+              willChange: "transform",
             }}
             animate={{
-              x: [0, -100, 60, 0],
-              y: [0, -80, -120, 0],
-              scale: [1.1, 0.9, 1.15, 1.1],
+              x: [0, -50, 30, 0],
+              y: [0, -40, -60, 0],
+              scale: [1.05, 0.95, 1.08, 1.05],
             }}
             transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
           />
 
           {/* Vibrant center-left rose glow */}
           <motion.div
-            className="absolute w-[600px] h-[600px] rounded-full blur-[110px]"
+            className="absolute w-[280px] sm:w-[500px] h-[280px] sm:h-[500px] rounded-full blur-2xl sm:blur-[90px]"
             style={{
-              background: "radial-gradient(circle, rgba(251,113,133,0.4) 0%, rgba(244,114,182,0.15) 60%, transparent 80%)",
+              background: "radial-gradient(circle, rgba(251,113,133,0.35) 0%, rgba(244,114,182,0.12) 60%, transparent 80%)",
               top: "20%",
-              left: "15%",
+              left: "10%",
+              willChange: "transform",
             }}
             animate={{
-              x: [0, 60, -40, 0],
-              y: [0, -60, 40, 0],
-              scale: [0.9, 1.1, 1, 0.9],
+              x: [0, 30, -20, 0],
+              y: [0, -30, 20, 0],
+              scale: [0.95, 1.05, 1, 0.95],
             }}
             transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
           />
 
           {/* Soft warm gold/peach glow */}
           <motion.div
-            className="absolute w-[500px] h-[500px] rounded-full blur-[90px]"
+            className="absolute w-[250px] sm:w-[400px] h-[250px] sm:h-[400px] rounded-full blur-2xl sm:blur-[80px]"
             style={{
-              background: "radial-gradient(circle, rgba(253,186,116,0.3) 0%, transparent 70%)",
+              background: "radial-gradient(circle, rgba(253,186,116,0.25) 0%, transparent 70%)",
               bottom: "15%",
-              left: "40%",
+              left: "35%",
+              willChange: "transform",
             }}
             animate={{
-              x: [0, -40, 80, 0],
-              y: [0, 60, -40, 0],
-              scale: [1, 1.15, 0.9, 1],
+              x: [0, -20, 40, 0],
+              y: [0, 30, -20, 0],
+              scale: [1, 1.1, 0.95, 1],
             }}
             transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
           />
 
           {/* Floating sparkles */}
           {mounted &&
-            Array.from({ length: 12 }).map((_, i) => (
+            Array.from({ length: 8 }).map((_, i) => (
               <motion.div
                 key={i}
                 className="absolute rounded-full"
                 style={{
-                  width: Math.random() * 4 + 1 + "px",
-                  height: Math.random() * 4 + 1 + "px",
+                  width: Math.random() * 3 + 1 + "px",
+                  height: Math.random() * 3 + 1 + "px",
                   backgroundColor:
                     i % 3 === 0
                       ? "rgba(147, 197, 253, 0.5)"
@@ -181,15 +185,14 @@ export default function ClientPage() {
                   top: Math.random() * 100 + "%",
                 }}
                 animate={{
-                  y: [0, -30, 0],
-                  opacity: [0.2, 0.9, 0.2],
-                  scale: [1, 1.5, 1],
+                  y: [0, -20, 0],
+                  opacity: [0.2, 0.8, 0.2],
                 }}
                 transition={{
-                  duration: Math.random() * 5 + 5,
+                  duration: Math.random() * 4 + 4,
                   repeat: Infinity,
                   ease: "easeInOut",
-                  delay: Math.random() * 3,
+                  delay: Math.random() * 2,
                 }}
               />
             ))}
@@ -201,15 +204,15 @@ export default function ClientPage() {
         {!isUnlocked && <VaultKeypad onUnlock={handleUnlock} />}
       </AnimatePresence>
 
-      {/* Main Content - fade in with color reveal */}
+      {/* Main Content - fade in with smooth opacity */}
       <AnimatePresence>
         {showContent && (
           <motion.div
             className="relative z-10"
-            initial={{ opacity: 0, scale: 0.95, filter: "grayscale(100%)" }}
-            animate={{ opacity: 1, scale: 1, filter: "grayscale(0%)" }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 3, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.97 }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           >
             <UnlockedView
               onClose={handleLock}

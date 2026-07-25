@@ -248,7 +248,7 @@ function RomanticParticles() {
           {p.type === "heart-fill" && (
             <svg
               viewBox="0 0 24 24"
-              className="w-full h-full text-pink-400/40 fill-current filter drop-shadow-[0_2px_6px_rgba(244,114,182,0.3)]"
+              className="w-full h-full text-pink-400/40 fill-current"
             >
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
             </svg>
@@ -259,7 +259,7 @@ function RomanticParticles() {
               fill="none"
               stroke="rgba(244,114,182,0.35)"
               strokeWidth="1.5"
-              className="w-full h-full filter drop-shadow-[0_2px_4px_rgba(244,114,182,0.2)]"
+              className="w-full h-full"
             >
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
             </svg>
@@ -267,7 +267,7 @@ function RomanticParticles() {
           {p.type === "petal" && (
             <svg
               viewBox="0 0 24 24"
-              className="w-full h-full text-pink-300/35 fill-current filter drop-shadow-[0_2px_4px_rgba(244,180,210,0.2)]"
+              className="w-full h-full text-pink-300/35 fill-current"
             >
               <path d="M12,2 C17.5,6 19,13 15,17 C11,21 5,19 3,13 C1,7 6.5,2 12,2 Z" />
             </svg>
@@ -275,7 +275,7 @@ function RomanticParticles() {
           {p.type === "sparkle" && (
             <svg
               viewBox="0 0 24 24"
-              className="w-full h-full text-amber-200/45 fill-current filter drop-shadow-[0_2px_6px_rgba(253,230,138,0.3)]"
+              className="w-full h-full text-amber-200/45 fill-current"
             >
               <path d="M12 2L14.8 9.2L22 12L14.8 14.8L12 22L9.2 14.8L2 12L9.2 9.2L12 2Z" />
             </svg>
