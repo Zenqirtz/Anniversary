@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useMotionValue, useSpring } from "framer-motion";
 import { AnimatePresence, motion } from "framer-motion";
 import VaultKeypad from "@/components/VaultKeypad";
 import UnlockedView from "@/components/UnlockedView";
@@ -12,34 +13,29 @@ export default function ClientPage() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  // GPU-only parallax (no React re-render on mousemove)
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const parallaxX = useSpring(mouseX, { stiffness: 20, damping: 25 });
+  const parallaxY = useSpring(mouseY, { stiffness: 20, damping: 25 });
 
   useEffect(() => {
     setMounted(true);
 
     const handleMouseMove = (e: MouseEvent) => {
-      // Subtle movement: divider 45 keeps it elegant
-      setMousePos({
-        x: (e.clientX - window.innerWidth / 2) / 45,
-        y: (e.clientY - window.innerHeight / 2) / 45,
-      });
+      mouseX.set((e.clientX - window.innerWidth / 2) / 80);
+      mouseY.set((e.clientY - window.innerHeight / 2) / 80);
     };
-    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+  }, [mouseX, mouseY]);
 
   useEffect(() => {
     if (isUnlocked && audioRef.current) {
       audioRef.current.volume = 0.3;
-      const playPromise = audioRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => setIsPlaying(true))
-          .catch((e) => {
-            console.error("Audio auto-play prevented:", e);
-            setIsPlaying(false);
-          });
-      }
+      audioRef.current.play().catch(() => {});
+      setIsPlaying(true);
     }
   }, [isUnlocked]);
 
@@ -49,10 +45,7 @@ export default function ClientPage() {
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
-      audioRef.current
-        .play()
-        .then(() => setIsPlaying(true))
-        .catch(() => setIsPlaying(false));
+      audioRef.current.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
     }
   };
 
@@ -63,15 +56,9 @@ export default function ClientPage() {
   };
 
   const handleUnlockStart = () => {
-    // Immediate interaction trigger for mobile browser gesture context
     if (audioRef.current) {
       audioRef.current.volume = 0.3;
-      audioRef.current
-        .play()
-        .then(() => setIsPlaying(true))
-        .catch((e) => {
-          console.error("Audio auto-play prevented:", e);
-        });
+      audioRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
     }
   };
 
@@ -81,9 +68,7 @@ export default function ClientPage() {
       audioRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
     }
     setIsUnlocked(true);
-    setTimeout(() => {
-      setShowContent(true);
-    }, 1200);
+    setTimeout(() => setShowContent(true), 1200);
   };
 
   const handleLock = () => {
@@ -105,123 +90,68 @@ export default function ClientPage() {
           : "#1a233a",
       }}
     >
-      {/* Hidden Audio Element */}
       <audio ref={audioRef} src="/music/Download.mp3" loop preload="none" />
 
-      {/* Background ambient glow - blue-pink gradient orbs (only visible when unlocked) */}
+      {/* Background ambient glow (no blur filter — GPU-friendly) */}
       {showContent && (
         <motion.div
           className="fixed inset-0 pointer-events-none z-0 overflow-hidden"
-          animate={{ x: mousePos.x, y: mousePos.y }}
-          transition={{ type: "spring", stiffness: 60, damping: 22 }}
+          style={{ x: parallaxX, y: parallaxY }}
+          transition={{ type: "spring", stiffness: 20, damping: 25 }}
         >
-          {/* Animated blue/purple orb */}
-          <motion.div
-            className="absolute w-[350px] sm:w-[700px] h-[350px] sm:h-[700px] rounded-full blur-2xl sm:blur-[100px]"
-            style={{
-              background: "radial-gradient(circle, rgba(147,197,253,0.55) 0%, rgba(196,181,253,0.25) 50%, transparent 70%)",
-              top: "-10%",
-              left: "-10%",
-              willChange: "transform",
-            }}
-            animate={{
-              x: [0, 60, -30, 0],
-              y: [0, 40, 60, 0],
-              scale: [1, 1.1, 0.95, 1],
-            }}
-            transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
-          />
+          {/* 4 softer soft glows (replaces blur-90 orbs) */}
+          {[
+            { bg: "radial-gradient(circle, rgba(147,197,253,0.35) 0%, transparent 70%)", top: "-5%", left: "-5%", w: "70vw", h: "70vw", dur: 30, scale: [1, 1.08, 0.95, 1] },
+            { bg: "radial-gradient(circle, rgba(244,114,182,0.3) 0%, transparent 70%)", bottom: "-5%", right: "-5%", w: "60vw", h: "60vw", dur: 27, scale: [1.05, 0.95, 1.08, 1.05] },
+            { bg: "radial-gradient(circle, rgba(251,113,133,0.2) 0%, transparent 70%)", top: "20%", left: "10%", w: "50vw", h: "50vw", dur: 24, scale: [0.95, 1.05, 1, 0.95] },
+            { bg: "radial-gradient(circle, rgba(253,186,116,0.18) 0%, transparent 70%)", bottom: "15%", left: "35%", w: "40vw", h: "40vw", dur: 21, scale: [1, 1.1, 0.95, 1] },
+          ].map((orb, i) => (
+            <motion.div
+              key={i}
+              className="absolute rounded-full pointer-events-none"
+              style={{
+                background: orb.bg,
+                width: orb.w,
+                height: orb.h,
+                top: orb.top,
+                left: orb.left,
+                willChange: "transform",
+              }}
+              animate={{ x: [0, 30, -20, 0], y: [0, 20, 30, 0], scale: orb.scale }}
+              transition={{ duration: orb.dur, repeat: Infinity, ease: "easeInOut" }}
+            />
+          ))}
 
-          {/* Animated pink/peach orb */}
-          <motion.div
-            className="absolute w-[320px] sm:w-[600px] h-[320px] sm:h-[600px] rounded-full blur-2xl sm:blur-[90px]"
-            style={{
-              background: "radial-gradient(circle, rgba(244,114,182,0.5) 0%, rgba(253,186,116,0.2) 50%, transparent 70%)",
-              bottom: "-10%",
-              right: "-10%",
-              willChange: "transform",
-            }}
-            animate={{
-              x: [0, -50, 30, 0],
-              y: [0, -40, -60, 0],
-              scale: [1.05, 0.95, 1.08, 1.05],
-            }}
-            transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
-          />
-
-          {/* Vibrant center-left rose glow */}
-          <motion.div
-            className="absolute w-[280px] sm:w-[500px] h-[280px] sm:h-[500px] rounded-full blur-2xl sm:blur-[90px]"
-            style={{
-              background: "radial-gradient(circle, rgba(251,113,133,0.35) 0%, rgba(244,114,182,0.12) 60%, transparent 80%)",
-              top: "20%",
-              left: "10%",
-              willChange: "transform",
-            }}
-            animate={{
-              x: [0, 30, -20, 0],
-              y: [0, -30, 20, 0],
-              scale: [0.95, 1.05, 1, 0.95],
-            }}
-            transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-          />
-
-          {/* Soft warm gold/peach glow */}
-          <motion.div
-            className="absolute w-[250px] sm:w-[400px] h-[250px] sm:h-[400px] rounded-full blur-2xl sm:blur-[80px]"
-            style={{
-              background: "radial-gradient(circle, rgba(253,186,116,0.25) 0%, transparent 70%)",
-              bottom: "15%",
-              left: "35%",
-              willChange: "transform",
-            }}
-            animate={{
-              x: [0, -20, 40, 0],
-              y: [0, 30, -20, 0],
-              scale: [1, 1.1, 0.95, 1],
-            }}
-            transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-          />
-
-          {/* Floating sparkles */}
+          {/* Sparkles — reduced to 4, transform+opacity only */}
           {mounted &&
-            Array.from({ length: 8 }).map((_, i) => (
+            Array.from({ length: 4 }).map((_, i) => (
               <motion.div
                 key={i}
                 className="absolute rounded-full"
                 style={{
-                  width: Math.random() * 3 + 1 + "px",
-                  height: Math.random() * 3 + 1 + "px",
+                  width: Math.random() * 4 + 1,
+                  height: Math.random() * 4 + 1,
                   backgroundColor:
                     i % 3 === 0
-                      ? "rgba(147, 197, 253, 0.5)"
+                      ? "rgba(147, 197, 253, 0.4)"
                       : i % 3 === 1
-                      ? "rgba(244, 114, 182, 0.4)"
-                      : "rgba(196, 181, 253, 0.4)",
-                  left: Math.random() * 100 + "%",
-                  top: Math.random() * 100 + "%",
+                      ? "rgba(244, 114, 182, 0.35)"
+                      : "rgba(196, 181, 253, 0.35)",
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  willChange: "transform, opacity",
                 }}
-                animate={{
-                  y: [0, -20, 0],
-                  opacity: [0.2, 0.8, 0.2],
-                }}
-                transition={{
-                  duration: Math.random() * 4 + 4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: Math.random() * 2,
-                }}
+                animate={{ y: [0, -15, 0], opacity: [0.2, 0.7, 0.2] }}
+                transition={{ duration: Math.random() * 4 + 4, repeat: Infinity, ease: "easeInOut", delay: Math.random() * 2 }}
               />
             ))}
         </motion.div>
       )}
 
-      {/* Vault Keypad (Landing) - NO grayscale, original colors preserved */}
       <AnimatePresence>
         {!isUnlocked && <VaultKeypad onUnlock={handleUnlock} onUnlockStart={handleUnlockStart} />}
       </AnimatePresence>
 
-      {/* Main Content - fade in with smooth opacity */}
       <AnimatePresence>
         {showContent && (
           <motion.div

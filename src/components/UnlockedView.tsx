@@ -204,7 +204,7 @@ function RomanticParticles() {
 
   useEffect(() => {
     const isMobile = window.innerWidth < 768;
-    const count = isMobile ? 12 : 20;
+    const count = isMobile ? 6 : 10;
     const newParticles = Array.from({ length: count }).map((_, i) => ({
       id: i,
       x: Math.random() * 100,
@@ -357,11 +357,10 @@ export default function UnlockedView({
   };
 
   const smoothFadeUp = {
-    hidden: { opacity: 0, y: 25, filter: "blur(6px)" },
+    hidden: { opacity: 0, y: 25 },
     show: {
       opacity: 1,
       y: 0,
-      filter: "blur(0px)",
       transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] },
     },
   };
@@ -509,7 +508,7 @@ export default function UnlockedView({
           transition={{ delay: 0.5, duration: 1.5, ease: "easeOut" }}
         >
           <motion.div
-            className="relative rounded-2xl p-5 sm:p-6"
+            className="relative rounded-2xl p-5 sm:p-6 shadow-2xl"
             style={{
               rotateX,
               rotateY,
@@ -517,20 +516,6 @@ export default function UnlockedView({
               background:
                 "linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.85) 50%, rgba(249,245,255,0.9) 100%)",
               border: "1px solid rgba(255,255,255,0.7)",
-            }}
-            animate={{
-              boxShadow: [
-                "0 20px 60px rgba(147, 197, 253, 0.2), 0 8px 24px rgba(0,0,0,0.06), inset 0 0 20px rgba(255,255,255,0.8)",
-                "0 20px 60px rgba(244, 114, 182, 0.25), 0 8px 24px rgba(0,0,0,0.06), inset 0 0 20px rgba(255,255,255,0.8)",
-                "0 20px 60px rgba(147, 197, 253, 0.2), 0 8px 24px rgba(0,0,0,0.06), inset 0 0 20px rgba(255,255,255,0.8)",
-              ],
-            }}
-            transition={{
-              boxShadow: {
-                duration: 5,
-                repeat: Infinity,
-                ease: "easeInOut",
-              },
             }}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
