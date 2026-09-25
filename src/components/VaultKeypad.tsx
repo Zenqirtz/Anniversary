@@ -5,12 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface VaultKeypadProps {
   onUnlock: () => void;
+  onUnlockStart?: () => void;
 }
 
 const CORRECT_CODE = "0625";
 const MAX_LENGTH = 4;
 
-export default function VaultKeypad({ onUnlock }: VaultKeypadProps) {
+export default function VaultKeypad({ onUnlock, onUnlockStart }: VaultKeypadProps) {
   const [code, setCode] = useState("");
   const [status, setStatus] = useState<"locked" | "error" | "success">("locked");
   const [shaking, setShaking] = useState(false);
@@ -29,6 +30,7 @@ export default function VaultKeypad({ onUnlock }: VaultKeypadProps) {
 
       if (key === "OK") {
         if (code === CORRECT_CODE) {
+          onUnlockStart?.();
           setStatus("success");
           setGlitching(true);
           setTimeout(() => onUnlock(), 1500);
@@ -72,7 +74,7 @@ export default function VaultKeypad({ onUnlock }: VaultKeypadProps) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-40 flex items-center justify-center p-4 overflow-hidden"
+      className="fixed inset-0 z-40 flex items-center justify-center p-4 overflow-y-auto"
       style={{ background: "linear-gradient(160deg, #1c1c1c 0%, #2a2a2a 50%, #1f1f1f 100%)" }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -243,13 +245,20 @@ export default function VaultKeypad({ onUnlock }: VaultKeypadProps) {
           </div>
 
           <motion.p
-            className="text-white/40 text-[9px] font-mono tracking-widest uppercase mb-4 flex items-center gap-2"
+            className="text-white/40 text-[9px] font-mono tracking-widest uppercase mb-1 flex items-center gap-2"
             animate={{ opacity: [0.3, 0.6, 0.3] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           >
             <span className="w-4 h-px bg-white/20" />
             MASUKAN KODE AKSES
             <span className="w-4 h-px bg-white/20" />
+          </motion.p>
+          <motion.p
+            className="text-[#ff2d75]/70 text-[8px] font-mono tracking-widest uppercase mb-4 text-center"
+            animate={{ opacity: [0.5, 0.9, 0.5] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          >
+            HINT: TANGGAL JADIAN (0625)
           </motion.p>
 
           {/* Keypad */}

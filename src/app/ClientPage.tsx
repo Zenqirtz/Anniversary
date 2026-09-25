@@ -62,7 +62,24 @@ export default function ClientPage() {
     setIsMuted(!isMuted);
   };
 
+  const handleUnlockStart = () => {
+    // Immediate interaction trigger for mobile browser gesture context
+    if (audioRef.current) {
+      audioRef.current.volume = 0.3;
+      audioRef.current
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch((e) => {
+          console.error("Audio auto-play prevented:", e);
+        });
+    }
+  };
+
   const handleUnlock = () => {
+    if (audioRef.current && !isPlaying) {
+      audioRef.current.volume = 0.3;
+      audioRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
+    }
     setIsUnlocked(true);
     setTimeout(() => {
       setShowContent(true);
@@ -201,7 +218,7 @@ export default function ClientPage() {
 
       {/* Vault Keypad (Landing) - NO grayscale, original colors preserved */}
       <AnimatePresence>
-        {!isUnlocked && <VaultKeypad onUnlock={handleUnlock} />}
+        {!isUnlocked && <VaultKeypad onUnlock={handleUnlock} onUnlockStart={handleUnlockStart} />}
       </AnimatePresence>
 
       {/* Main Content - fade in with smooth opacity */}

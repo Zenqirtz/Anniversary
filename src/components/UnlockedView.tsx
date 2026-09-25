@@ -35,6 +35,7 @@ function PolaroidCard({
   onClick,
   onZoom,
 }: PolaroidCardProps) {
+  const isTouchDevice = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
   const dragX = useMotionValue(position.x);
   const dragY = useMotionValue(position.y);
   const rotateVal = useMotionValue(position.rotation);
@@ -105,7 +106,7 @@ function PolaroidCard({
           ? "cursor-grab active:cursor-grabbing hover:brightness-105"
           : "cursor-pointer hover:scale-102 transition-transform"
       }`}
-      drag={isTop}
+      drag={isTop ? (isTouchDevice ? "x" : true) : false}
       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
       dragElastic={0.7}
       onDragEnd={handleDragEnd}
@@ -145,7 +146,7 @@ function PolaroidCard({
               e.stopPropagation();
               onZoom();
             }}
-            className="absolute top-2 right-2 z-20 bg-black/40 hover:bg-black/70 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute top-2 right-2 z-20 bg-black/40 hover:bg-black/70 text-white p-1.5 rounded-full opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
             title="Perbesar Foto"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
