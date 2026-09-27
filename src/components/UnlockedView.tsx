@@ -543,7 +543,7 @@ export default function UnlockedView({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8, duration: 0.8 }}
             >
-              Happy Anniversary Sayang! 💝
+              Happy Monthsarry Sayang! 💝
             </motion.h2>
 
             {/* Content Text */}
@@ -554,21 +554,15 @@ export default function UnlockedView({
               animate="show"
             >
               <motion.p variants={smoothFadeUp}>
-                Kalo kamu baca ini, selamat! Kamu udah berhasil buka hatiku
-                (apasii hehe). Ini bukan sekadar halaman biasa kok, tapi isinya
-                jauh lebih penting.
-              </motion.p>
+              Kita belajar bahwa cinta terdalam adalah keputusan untuk tetap ada dan hadir utuh dalam hubungan, menjaga tanpa jeda, dan menjadikan setiap hari sebagai ruang ternyaman untuk saling pulang.              </motion.p>
               <motion.p variants={smoothFadeUp}>
-                Isinya bukti valid no debat kalo kita tuh pasangan paling lucu
-                sedunia. Maacii yaww sayangg udah nemenin aku sejauh ini, jadi
-                support system terbaik, dan tempat pulang paling ter-nyaman aku.
+                Terima kasih karena tetap tinggal, bahkan di hari-hari kita tidak sedang baik-baik saja. Terima kasih karena memilih untuk mengerti, bukan hanya untuk dimengerti.
               </motion.p>
               <motion.p
                 variants={smoothFadeUp}
                 className="font-dancing text-lg sm:text-xl text-[#3b82f6] leading-relaxed mt-3 pt-3 text-center select-text border-t border-dashed border-blue-100/60"
               >
-                &ldquo;Waktu berjalan dengan sangat cepat yaww sayang, tapi
-                bahagia, sayang dan cintanya aku tetep sama. I love you to the
+                &ldquo;Semoga bulan depan, dan bulan-bulan setelahnya, kita tetap menjadi rumah yang paling nyaman untuk pulang. I love you to the
                 moon and back!&rdquo;
               </motion.p>
             </motion.div>
