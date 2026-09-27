@@ -104,7 +104,7 @@ function PolaroidCard({
       className={`absolute shadow-2xl transition-[filter] select-none ${
         isTop
           ? "cursor-grab active:cursor-grabbing hover:brightness-105"
-          : "cursor-pointer hover:scale-102 transition-transform"
+          : "cursor-pointer hover:scale-[1.02] transition-transform"
       }`}
       drag={isTop ? (isTouchDevice ? "x" : true) : false}
       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
