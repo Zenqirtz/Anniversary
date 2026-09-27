@@ -21,6 +21,11 @@
     background: linear-gradient(135deg, #eff6ff 0%, #fae8ff 30%, #fbcfe8 65%, #dbeafe 100%);
     overflow-x: hidden;
     min-height: 100vh;
+    /* prefers-reduced-motion */
+    @media (prefers-reduced-motion: reduce) {
+      animation: none !important;
+      transition: none !important;
+    }
   }
 
   ::selection {
@@ -51,9 +56,7 @@
 @layer components {
   /* Keypad Button */
   .keypad-btn {
-    @apply relative flex items-center justify-center rounded-lg
-      font-orbitron text-xl font-bold transition-all duration-200
-      active:scale-95;
+    @apply relative flex items-center justify-center rounded-lg font-orbitron text-xl font-bold transition-all duration-200 active:scale-95;
     background: rgba(15, 20, 50, 0.8);
     border: 1px solid rgba(0, 240, 255, 0.2);
     color: #e0e6ff;
@@ -78,4 +81,12 @@
   .text-balance {
     text-wrap: balance;
   }
+}
+
+/* ===== CUSTOM ANIMATIONS ===== */
+@layer utilities {
+  .animate-orb-breathe { animation: orbBreathe var(--duration, 30s) ease-in-out infinite; }
+  .animate-particle-float { animation: floatParticle var(--duration, 8s) ease-in-out infinite; }
+  .animate-sparkle-float { animation: sparkleFloat var(--duration, 5s) ease-in-out infinite; }
+  .animate-success-pulse { animation: successPulse 1s ease-in-out infinite; }
 }
