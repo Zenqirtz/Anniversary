@@ -97,7 +97,6 @@ export default function ClientPage() {
         <motion.div
           className="fixed inset-0 pointer-events-none z-0 overflow-hidden"
           style={{ x: parallaxX, y: parallaxY }}
-          transition={{ type: "spring", stiffness: 20, damping: 25 }}
         >
           {/* 4 softer soft glows (replaces blur-90 orbs) */}
           {[
