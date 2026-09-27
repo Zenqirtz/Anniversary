@@ -1,11 +1,12 @@
 import eslintPluginNext from "@next/eslint-plugin-next";
-import globals from "globals";
 import tseslint from "typescript-eslint";
+import globals from "globals";
 
 export default tseslint.config(
   {
     ignores: [".next/**", "node_modules/**", "out/**"],
   },
+  ...tseslint.configs.recommended,
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
     languageOptions: {
@@ -15,11 +16,6 @@ export default tseslint.config(
         ...globals.browser,
         ...globals.node,
         ...globals.es2021,
-        React: "writable",
-      },
-      parser: tseslint.parser,
-      parserOptions: {
-        project: "./tsconfig.json",
       },
     },
     plugins: {
