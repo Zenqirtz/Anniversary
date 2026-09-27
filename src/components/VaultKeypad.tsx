@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface VaultKeypadProps {
@@ -58,6 +58,21 @@ export default function VaultKeypad({ onUnlock, onUnlockStart }: VaultKeypadProp
     setMounted(true);
   }, []);
 
+  const particles = useMemo(
+    () =>
+      Array.from({ length: 6 }).map((_, i) => ({
+        id: i,
+        width: Math.random() * 2 + 1,
+        height: Math.random() * 2 + 1,
+        alpha: Math.random() * 0.15 + 0.05,
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        duration: Math.random() * 8 + 8,
+        delay: Math.random() * 5,
+      })),
+    []
+  );
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key >= "0" && e.key <= "9") {
@@ -95,26 +110,26 @@ export default function VaultKeypad({ onUnlock, onUnlockStart }: VaultKeypadProp
       />
 
       {/* Soft floating particles */}
-      {mounted && Array.from({ length: 6 }).map((_, i) => (
+      {mounted && particles.map((particle) => (
         <motion.div
-          key={i}
+          key={particle.id}
           className="absolute rounded-full pointer-events-none z-0"
           style={{
-            width: Math.random() * 2 + 1,
-            height: Math.random() * 2 + 1,
-            backgroundColor: `rgba(255, 255, 255, ${Math.random() * 0.15 + 0.05})`,
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
+            width: particle.width,
+            height: particle.height,
+            backgroundColor: `rgba(255, 255, 255, ${particle.alpha})`,
+            left: `${particle.left}%`,
+            top: `${particle.top}%`,
           }}
           animate={{
             y: [0, -30, 0],
             opacity: [0.05, 0.25, 0.05],
           }}
           transition={{
-            duration: Math.random() * 8 + 8,
+            duration: particle.duration,
             repeat: Infinity,
             ease: "easeInOut",
-            delay: Math.random() * 5,
+            delay: particle.delay,
           }}
         />
       ))}

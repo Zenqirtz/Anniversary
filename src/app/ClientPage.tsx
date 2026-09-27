@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useMotionValue, useSpring } from "framer-motion";
 import { AnimatePresence, motion } from "framer-motion";
 import VaultKeypad from "@/components/VaultKeypad";
@@ -30,6 +30,24 @@ export default function ClientPage() {
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, [mouseX, mouseY]);
+
+  const sparkles = useMemo(
+    () =>
+      Array.from({ length: 4 }).map((_, i) => ({
+        id: i,
+        width: Math.random() * 4 + 1,
+        height: Math.random() * 4 + 1,
+        color:
+          i % 3 === 0
+            ? "rgba(147, 197, 253, 0.4)"
+            : i % 3 === 1
+            ? "rgba(244, 114, 182, 0.35)"
+            : "rgba(196, 181, 253, 0.35)",
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+      })),
+    []
+  );
 
   useEffect(() => {
     if (isUnlocked && audioRef.current) {
@@ -123,21 +141,16 @@ export default function ClientPage() {
 
           {/* Sparkles — reduced to 4, transform+opacity only */}
           {mounted &&
-            Array.from({ length: 4 }).map((_, i) => (
+            sparkles.map((sparkle) => (
               <motion.div
-                key={i}
+                key={sparkle.id}
                 className="absolute rounded-full"
                 style={{
-                  width: Math.random() * 4 + 1,
-                  height: Math.random() * 4 + 1,
-                  backgroundColor:
-                    i % 3 === 0
-                      ? "rgba(147, 197, 253, 0.4)"
-                      : i % 3 === 1
-                      ? "rgba(244, 114, 182, 0.35)"
-                      : "rgba(196, 181, 253, 0.35)",
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
+                  width: sparkle.width,
+                  height: sparkle.height,
+                  backgroundColor: sparkle.color,
+                  left: `${sparkle.left}%`,
+                  top: `${sparkle.top}%`,
                   willChange: "transform, opacity",
                 }}
                 animate={{ y: [0, -15, 0], opacity: [0.2, 0.7, 0.2] }}
