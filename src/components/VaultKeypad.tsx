@@ -51,7 +51,7 @@ export default function VaultKeypad({ onUnlock, onUnlockStart }: VaultKeypadProp
         setStatus("locked");
       }
     },
-    [code, status, onUnlock]
+    [code, status, onUnlock, onUnlockStart]
   );
 
   useEffect(() => {
