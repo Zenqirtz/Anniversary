@@ -137,32 +137,18 @@ export default function VaultKeypad({ onUnlock, onUnlockStart }: VaultKeypadProp
       {/* Background glitch artifacts on success */}
       <AnimatePresence>
         {glitching && (
-          <>
-            <motion.div
-              className="absolute inset-0 bg-white/5 mix-blend-overlay z-0"
-              initial={{ opacity: 0 }}
-              animate={{
-                opacity: [0, 0.5, 0.1, 0.8, 0],
-                x: [0, -10, 10, -5, 0]
-              }}
-              transition={{ duration: 0.5, repeat: Infinity, repeatType: "mirror" }}
-            />
-            <motion.div
-              className="absolute inset-0 bg-white/3 mix-blend-screen z-0"
-              initial={{ opacity: 0 }}
-              animate={{
-                opacity: [0, 0.3, 0, 0.5, 0],
-                y: [0, 3, -3, 2, 0]
-              }}
-              transition={{ duration: 0.3, repeat: Infinity, repeatType: "mirror" }}
-            />
-          </>
+          <motion.div
+            className="absolute inset-0 bg-white/5 pointer-events-none z-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 0.3, 0.1, 0.4, 0] }}
+            transition={{ duration: 0.4, repeat: Infinity }}
+          />
         )}
       </AnimatePresence>
 
       {/* Keypad Card */}
       <motion.div
-        className={`relative w-[340px] rounded-[24px] p-8 overflow-hidden backdrop-blur-xl border z-10 ${
+        className={`relative w-[340px] rounded-[24px] p-8 overflow-hidden backdrop-blur-md border z-10 ${
           shaking ? "animate-shake border-[#ff2d75]/80" : "border-white/10"
         }`}
         style={{
@@ -176,9 +162,8 @@ export default function VaultKeypad({ onUnlock, onUnlockStart }: VaultKeypadProp
         initial={{ y: 30, opacity: 0, scale: 0.95 }}
         animate={
           glitching ? {
-            x: [0, -5, 5, -2, 2, 0],
+            x: [0, -4, 4, -2, 2, 0],
             y: [0, 2, -2, 1, -1, 0],
-            filter: ["hue-rotate(0deg)", "hue-rotate(90deg)", "hue-rotate(0deg)"]
           } : {
             y: 0,
             opacity: 1,
@@ -188,45 +173,28 @@ export default function VaultKeypad({ onUnlock, onUnlockStart }: VaultKeypadProp
         transition={glitching ? { duration: 0.2, repeat: Infinity } : { type: "spring", stiffness: 200, damping: 25, delay: 0.2 }}
       >
         {/* Subtle top shimmer */}
-        <motion.div
-          className="absolute top-0 left-0 right-0 h-[1px] pointer-events-none z-0"
-          style={{
-            background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)",
-            backgroundSize: "200% 100%",
-          }}
-          animate={{ backgroundPosition: ["200% 0%", "-200% 0%"] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-        />
+        <div className="absolute top-0 left-0 right-0 h-[1px] pointer-events-none z-0 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
         <div className="flex flex-col items-center relative z-10">
           {/* Lock icon */}
-          <motion.div
-            className="mb-2"
-            animate={{ y: [0, -3, 0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-          >
+          <div className="mb-2 animate-lock-bob">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
               <path d="M7 11V7a5 5 0 0 1 10 0v4" />
             </svg>
-          </motion.div>
+          </div>
 
           {/* Title */}
-          <motion.h1
-            className="font-orbitron text-xl font-bold text-white/90 tracking-widest uppercase mb-1"
-            animate={{ opacity: [0.8, 1, 0.8] }}
-            transition={{ duration: 3, repeat: Infinity }}
-          >
+          <h1 className="font-orbitron text-xl font-bold text-white/90 tracking-widest uppercase mb-1">
             BRANKAS RAHASIA
-          </motion.h1>
+          </h1>
 
           {/* Status */}
           <div className="flex items-center gap-1.5 mb-6 text-[10px] font-mono tracking-widest uppercase">
-            <motion.span
-              className={`w-2 h-2 rounded-full ${status === "success" ? "bg-[#39ff14]" : status === "error" ? "bg-[#ff2d75]" : "bg-[#ff2d75]"
-                }`}
-              animate={{ opacity: [1, 0.3, 1] }}
-              transition={{ duration: status === "locked" ? 2 : 0.2, repeat: Infinity }}
+            <span
+              className={`w-2 h-2 rounded-full ${
+                status === "success" ? "bg-[#39ff14]" : status === "error" ? "bg-[#ff2d75]" : "bg-[#ff2d75]"
+              } animate-status-blink`}
               style={{
                 boxShadow: `0 0 8px ${status === "success" ? "#39ff14" : "#ff2d75"}`
               }}
@@ -259,22 +227,14 @@ export default function VaultKeypad({ onUnlock, onUnlockStart }: VaultKeypadProp
             ))}
           </div>
 
-          <motion.p
-            className="text-white/40 text-[9px] font-mono tracking-widest uppercase mb-1 flex items-center gap-2"
-            animate={{ opacity: [0.3, 0.6, 0.3] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-          >
+          <p className="text-white/40 text-[9px] font-mono tracking-widest uppercase mb-1 flex items-center gap-2">
             <span className="w-4 h-px bg-white/20" />
             MASUKAN KODE AKSES
             <span className="w-4 h-px bg-white/20" />
-          </motion.p>
-          <motion.p
-            className="text-[#ff2d75]/70 text-[8px] font-mono tracking-widest uppercase mb-4 text-center"
-            animate={{ opacity: [0.5, 0.9, 0.5] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          >
+          </p>
+          <p className="text-[#ff2d75]/70 text-[8px] font-mono tracking-widest uppercase mb-4 text-center animate-hint-pulse">
             HINT: TANGGAL JADIAN (0625)
-          </motion.p>
+          </p>
 
           {/* Keypad */}
           <div className="grid grid-cols-3 gap-3 w-full">
@@ -338,24 +298,16 @@ export default function VaultKeypad({ onUnlock, onUnlockStart }: VaultKeypadProp
               exit={{ opacity: 0 }}
               transition={{ type: "spring", stiffness: 200, damping: 20 }}
             >
-              <motion.div
-                className="w-16 h-16 border-4 border-[#39ff14] rounded-full flex items-center justify-center mb-4 shadow-[0_0_20px_#39ff14]"
-                animate={{ scale: [1, 1.2, 1], rotate: [0, 180, 360] }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-              >
+              <div className="w-16 h-16 border-4 border-[#39ff14] rounded-full flex items-center justify-center mb-4 shadow-[0_0_20px_#39ff14] animate-success-ring">
                 <div className="w-8 h-8 bg-[#39ff14] rounded-full animate-ping" />
-              </motion.div>
+              </div>
               <span className="font-orbitron text-[#39ff14] font-bold text-xl tracking-widest text-center"
                 style={{ textShadow: "0 0 10px #39ff14" }}>
                 ACCESS<br />GRANTED
               </span>
-              <motion.div
-                className="mt-6 text-white/50 font-mono text-xs"
-                animate={{ opacity: [1, 0] }}
-                transition={{ duration: 0.5, repeat: Infinity }}
-              >
+              <div className="mt-6 text-white/50 font-mono text-xs animate-decrypting">
                 Decrypting payload...
-              </motion.div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
