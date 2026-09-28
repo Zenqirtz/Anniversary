@@ -3,17 +3,12 @@ import { Orbitron, Rajdhani, Share_Tech_Mono, Dancing_Script } from "next/font/g
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
-const orbitron = Orbitron({
-  subsets: ["latin"],
-  variable: "--font-orbitron",
-  display: "swap",
-});
-
 const rajdhani = Rajdhani({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "600"],
   variable: "--font-rajdhani",
   display: "swap",
+  preload: true,
 });
 
 const shareTechMono = Share_Tech_Mono({
@@ -21,22 +16,27 @@ const shareTechMono = Share_Tech_Mono({
   weight: "400",
   variable: "--font-share-tech-mono",
   display: "swap",
+  preload: false,
+});
+
+const orbitron = Orbitron({
+  subsets: ["latin"],
+  variable: "--font-orbitron",
+  display: "swap",
+  preload: false,
 });
 
 const dancing = Dancing_Script({
   subsets: ["latin"],
   variable: "--font-dancing",
   display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {
   title: "Brankas Rahasia | Secret Love Archive 💖",
   description: "Arsip digital cinta rahasia — sebuah surat cinta digital yang tersimpan dalam brankas.",
-  icons: {
-    icon: "/icon.svg",
-    shortcut: "/icon.svg",
-    apple: "/icon.svg",
-  },
+  icons: { icon: "/icon.svg", shortcut: "/icon.svg", apple: "/icon.svg" },
   openGraph: {
     title: "Brankas Rahasia | Secret Love Archive 💖",
     description: "Arsip digital cinta rahasia — sebuah surat cinta digital tersimpan dalam brankas.",
@@ -48,10 +48,7 @@ export const metadata: Metadata = {
     title: "Brankas Rahasia | Secret Love Archive 💖",
     description: "Arsip digital cinta rahasia — sebuah surat cinta digital tersimpan dalam brankas.",
   },
-  robots: {
-    index: false,
-    follow: false,
-  },
+  robots: { index: false, follow: false },
 };
 
 export const viewport: Viewport = {
@@ -69,7 +66,7 @@ export default function RootLayout({
   return (
     <html lang="id" className="scroll-smooth">
       <body
-        className={`${orbitron.variable} ${rajdhani.variable} ${shareTechMono.variable} ${dancing.variable} font-rajdhani antialiased text-slate-800 min-h-screen`}
+        className={`${rajdhani.variable} ${shareTechMono.variable} ${orbitron.variable} ${dancing.variable} font-rajdhani antialiased text-slate-800 min-h-screen`}
       >
         {children}
         <Analytics />
