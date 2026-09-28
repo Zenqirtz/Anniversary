@@ -6,12 +6,13 @@ import { motion, AnimatePresence } from "framer-motion";
 interface VaultKeypadProps {
   onUnlock: () => void;
   onUnlockStart?: () => void;
+  reducedMotion?: boolean;
 }
 
 const CORRECT_CODE = "0625";
 const MAX_LENGTH = 4;
 
-export default function VaultKeypad({ onUnlock, onUnlockStart }: VaultKeypadProps) {
+export default function VaultKeypad({ onUnlock, onUnlockStart, reducedMotion = false }: VaultKeypadProps) {
   const [code, setCode] = useState("");
   const [status, setStatus] = useState<"locked" | "error" | "success">("locked");
   const [shaking, setShaking] = useState(false);
@@ -60,7 +61,7 @@ export default function VaultKeypad({ onUnlock, onUnlockStart }: VaultKeypadProp
 
   const particles = useMemo(
     () =>
-      Array.from({ length: 6 }).map((_, i) => ({
+      Array.from({ length: reducedMotion ? 0 : 4 }).map((_, i) => ({
         id: i,
         width: Math.random() * 2 + 1,
         height: Math.random() * 2 + 1,
@@ -70,7 +71,7 @@ export default function VaultKeypad({ onUnlock, onUnlockStart }: VaultKeypadProp
         duration: Math.random() * 8 + 8,
         delay: Math.random() * 5,
       })),
-    []
+    [reducedMotion]
   );
 
   useEffect(() => {
@@ -90,26 +91,26 @@ export default function VaultKeypad({ onUnlock, onUnlockStart }: VaultKeypadProp
   return (
     <motion.div
       className="fixed inset-0 z-40 flex items-center justify-center p-4 overflow-y-auto"
-      style={{ background: "linear-gradient(160deg, #1c1c1c 0%, #2a2a2a 50%, #1f1f1f 100%)" }}
+      style={{ background: "linear-gradient(160deg, #1c1c1c 0%, #2a2a2a 50%, #1f1f1f 100%)", contain: "layout paint" }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0, scale: 1.05, transition: { duration: 0.5 } }}
       transition={{ duration: 0.6 }}
     >
-      {/* Subtle ambient glow */}
-      <motion.div
-        className="absolute w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] rounded-full pointer-events-none z-0"
-        style={{
-          background: "radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%)",
-        }}
-        animate={{
-          scale: [1, 1.15, 1],
-          opacity: [0.4, 0.7, 0.4],
-        }}
-        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-      />
+      {!reducedMotion && (
+        <motion.div
+          className="absolute w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] rounded-full pointer-events-none z-0"
+          style={{
+            background: "radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%)",
+          }}
+          animate={{
+            scale: [1, 1.15, 1],
+            opacity: [0.4, 0.7, 0.4],
+          }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+        />
+      )}
 
-      {/* Soft floating particles */}
       {mounted && particles.map((particle) => (
         <motion.div
           key={particle.id}
@@ -134,7 +135,6 @@ export default function VaultKeypad({ onUnlock, onUnlockStart }: VaultKeypadProp
         />
       ))}
 
-      {/* Background glitch artifacts on success */}
       <AnimatePresence>
         {glitching && (
           <motion.div
@@ -146,13 +146,12 @@ export default function VaultKeypad({ onUnlock, onUnlockStart }: VaultKeypadProp
         )}
       </AnimatePresence>
 
-      {/* Keypad Card */}
       <motion.div
-        className={`relative w-[340px] rounded-[24px] p-8 overflow-hidden backdrop-blur-md border z-10 ${
+        className={`relative w-[340px] rounded-[24px] p-8 overflow-hidden border z-10 ${
           shaking ? "animate-shake border-[#ff2d75]/80" : "border-white/10"
         }`}
         style={{
-          background: "linear-gradient(180deg, rgba(50,50,50,0.7) 0%, rgba(35,35,35,0.8) 100%)",
+          background: "rgba(50,50,50,0.95)",
           boxShadow: status === "error"
             ? "0 0 30px rgba(255, 45, 117, 0.3), inset 0 0 20px rgba(255, 45, 117, 0.1)"
             : status === "success"
@@ -161,7 +160,7 @@ export default function VaultKeypad({ onUnlock, onUnlockStart }: VaultKeypadProp
         }}
         initial={{ y: 30, opacity: 0, scale: 0.95 }}
         animate={
-          glitching ? {
+          glitching && !reducedMotion ? {
             x: [0, -4, 4, -2, 2, 0],
             y: [0, 2, -2, 1, -1, 0],
           } : {
@@ -170,26 +169,22 @@ export default function VaultKeypad({ onUnlock, onUnlockStart }: VaultKeypadProp
             scale: 1,
           }
         }
-        transition={glitching ? { duration: 0.2, repeat: Infinity } : { type: "spring", stiffness: 200, damping: 25, delay: 0.2 }}
+        transition={glitching && !reducedMotion ? { duration: 0.2, repeat: Infinity } : { type: "spring", stiffness: 200, damping: 25, delay: 0.2 }}
       >
-        {/* Subtle top shimmer */}
         <div className="absolute top-0 left-0 right-0 h-[1px] pointer-events-none z-0 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
         <div className="flex flex-col items-center relative z-10">
-          {/* Lock icon */}
-          <div className="mb-2 animate-lock-bob">
+          <div className="mb-2">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
               <path d="M7 11V7a5 5 0 0 1 10 0v4" />
             </svg>
           </div>
 
-          {/* Title */}
           <h1 className="font-orbitron text-xl font-bold text-white/90 tracking-widest uppercase mb-1">
             BRANKAS RAHASIA
           </h1>
 
-          {/* Status */}
           <div className="flex items-center gap-1.5 mb-6 text-[10px] font-mono tracking-widest uppercase">
             <span
               className={`w-2 h-2 rounded-full ${
@@ -204,7 +199,6 @@ export default function VaultKeypad({ onUnlock, onUnlockStart }: VaultKeypadProp
             </span>
           </div>
 
-          {/* Display */}
           <div className={`w-full h-14 rounded-lg mb-3 flex items-center justify-center gap-4 border transition-colors duration-300 ${
             status === "error"
               ? "bg-[#2a1015]/80 border-[#ff2d75]/20"
@@ -236,7 +230,6 @@ export default function VaultKeypad({ onUnlock, onUnlockStart }: VaultKeypadProp
             HINT: TANGGAL JADIAN (0625)
           </p>
 
-          {/* Keypad */}
           <div className="grid grid-cols-3 gap-3 w-full">
             {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((num, idx) => (
               <motion.button
@@ -252,7 +245,6 @@ export default function VaultKeypad({ onUnlock, onUnlockStart }: VaultKeypadProp
               </motion.button>
             ))}
 
-            {/* Bottom row */}
             <motion.button
               onClick={() => handleKeyPress("HAPUS")}
               className="h-12 flex items-center justify-center text-[#ff2d75] font-orbitron text-xs font-bold hover:text-white transition-colors group relative overflow-hidden rounded-lg"
@@ -288,11 +280,11 @@ export default function VaultKeypad({ onUnlock, onUnlockStart }: VaultKeypadProp
           </div>
         </div>
 
-        {/* Success Screen Overlay */}
         <AnimatePresence>
           {status === "success" && (
             <motion.div
-              className="absolute inset-0 bg-gradient-to-t from-[#39ff14]/40 to-[#152a1a]/90 backdrop-blur-md flex flex-col items-center justify-center z-20 rounded-[24px]"
+              className="absolute inset-0 flex flex-col items-center justify-center z-20 rounded-[24px]"
+              style={{ background: "linear-gradient(to top, rgba(57,255,20,0.4), rgba(21,42,26,0.95))" }}
               initial={{ opacity: 0, y: "100%" }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
