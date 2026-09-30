@@ -9,7 +9,7 @@ interface VaultKeypadProps {
   reducedMotion?: boolean;
 }
 
-const CORRECT_CODE = "0625";
+const CORRECT_CODE = "2825";
 const MAX_LENGTH = 4;
 
 export default function VaultKeypad({ onUnlock, onUnlockStart, reducedMotion = false }: VaultKeypadProps) {
